@@ -79,7 +79,7 @@
         left: 2%;
         font-size: small;
         color: white;
-        font-family: cursive, Arial, Helvetica, sans-serif;
+        font-family: Arial, Helvetica, sans-serif;
       }
       .mobile-info {
         display: none;
@@ -89,7 +89,15 @@
         left: 2%;
         font-size: smaller;
         color: white;
-        font-family: cursive, Arial, Helvetica, sans-serif;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      .selector-div {
+        position: absolute;
+        top: 10%;
+        right: 3%;
+      }
+      .selector-div > label {
+        color: white;
       }
       @media (max-width: 600px) {
         #joystick {
@@ -114,9 +122,23 @@
       <span>Tap the box text to read the story</span><br />
       <span>Move with the joystick</span>
     </div>
+    <div class="selector-div">
+      <label for="category">Choose a category:</label><br />
+      <select name="sections" id="category">
+        <option value="">--Please choose an option--</option>
+        <option value="World">World</option>
+        <option value="Technology">Technology</option>
+        <option value="Business">Business</option>
+        <option value="Sports">Sports</option>
+        <option value="Entertainment">Entertainment</option>
+      </select>
+    </div>
     <div id="overlay">
       <button onclick="closeOverlay()">Close</button>
-      <iframe id="storyFrame"></iframe>
+      <!-- <iframe id="storyFrame"></iframe> -->
+      <frameset rows="100%,*" border="0">
+        <frame id="storyFrame" src="" frameborder="0" />
+      </frameset>
     </div>
     <div id="joystick"><div id="stick"></div></div>
 
@@ -185,13 +207,22 @@
           let mat = intersects[0].object.material;
           if (Array.isArray(mat)) {
             mat.forEach((m) => {
-              if (m.userData?.url) openOverlay(m.userData.url);
+              // if (m.userData?.url) openOverlay(m.userData.url);
+              if (m.userData?.url) openNewsLink(m.userData.url);
             });
           } else if (mat.userData?.url) {
             openOverlay(mat.userData.url);
           }
+          // } else if (mat.userData?.link) {
+          //   openOverlay(mat.userData.link);
+          // }
         }
       });
+
+      function openNewsLink(url) {
+        // window.open(url, "_blank");
+        window.open(url, "myWindow", "width=500,height=550");
+      }
 
       function openOverlay(url) {
         document.getElementById("overlay").style.display = "flex";
@@ -204,10 +235,21 @@
       window.closeOverlay = closeOverlay;
 
       // Fetch RSS
-      fetch("https://rss.app/feeds/v1.1/tFEkkPbun2w3lCoB.json")
+      // fetch("https://rss.app/feeds/v1.1/tFEkkPbun2w3lCoB.json")
+      fetch("https://ok.surf/api/v1/cors/news-feed")
         .then((r) => r.json())
         .then((data) => {
-          let items = data.items;
+          //let items = data.items;
+          let selectValue;
+          document
+            .getElementById("category")
+            .addEventListener("change", function () {
+              selectValue = this.value;
+              // console.log("Category ", data[selectValue]);
+              alert(`[TODO]: Switch to ${selectValue} stories..`);
+            });
+          let items = data.World;
+          // console.log("Items>>>> ", items);
           for (let i = 0; i < items.length; i += 4) {
             let group = items.slice(i, i + 4);
             let geometry = new THREE.BoxGeometry(2, 2, 2);
@@ -226,7 +268,8 @@
                 wrapText(ctx, group[face - 2].title, 10, 40, 236, 24);
                 let texture = new THREE.CanvasTexture(canvas);
                 let mat = new THREE.MeshBasicMaterial({ map: texture });
-                mat.userData = { url: group[face - 2].url };
+                //mat.userData = { url: group[face - 2].url };
+                mat.userData = { url: group[face - 2].link };
                 materials.push(mat);
               } else {
                 materials.push(
