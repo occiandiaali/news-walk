@@ -142,9 +142,20 @@
     </div>
     <div id="joystick"><div id="stick"></div></div>
 
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.132.2/examples/jsm/"
+        }
+      }
+    </script>
+
     <script type="module">
-      import * as THREE from "https://cdn.skypack.dev/three@0.132.2";
-      import { PointerLockControls } from "https://cdn.skypack.dev/three@0.132.2/examples/jsm/controls/PointerLockControls.js";
+      // import * as THREE from "https://cdn.skypack.dev/three@0.132.2";
+      // import { PointerLockControls } from "https://cdn.skypack.dev/three@0.132.2/examples/jsm/controls/PointerLockControls.js";
+      import * as THREE from "three";
+      import { PointerLockControls } from "three/addons/controls/PointerLockControls.js";
 
       let scene = new THREE.Scene();
       scene.background = new THREE.Color(0x202020);
